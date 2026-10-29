@@ -68,6 +68,8 @@ npx playwright install chromium    # once, if Chromium is not installed
 npm run render                     # missing transparent previews only
 npm run render -- --force           # regenerate all
 npm run publish:ipfs                # requires PINATA_JWT in environment
+npm run finalize:publication        # verify completeness, pin the public manifest
+npm run verify:publication          # verify public gateway bytes across collections
 npm run build:public               # produces dist/ for static hosting
 ```
 

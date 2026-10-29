@@ -12,7 +12,9 @@
     "render": "node scripts/render-thumbnails.mjs",
     "build:public": "node scripts/build-public.mjs",
     "test:locales": "node scripts/check-locales.mjs",
-    "publish:ipfs": "node scripts/publish-ipfs.mjs"
+    "publish:ipfs": "node scripts/publish-ipfs.mjs",
+    "finalize:publication": "node scripts/finalize-publication.mjs",
+    "verify:publication": "node scripts/verify-publication.mjs"
   },
   "dependencies": {
     "@ekza/avatar-renderer": "git+https://github.com/ekza-space/ekza-avatar-renderer.git#88432da60940a259a2b3f4163199f983a5584499",

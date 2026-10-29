@@ -6,7 +6,7 @@ export async function request(path,options){
  if(isPublic){
   if(path==='/api/catalog'){
    const response=await fetch(window.ASSET_BROWSER.catalogUrl||'./catalog.json');if(!response.ok)throw new Error(`Catalogue HTTP ${response.status}`);
-   const data=await response.json();catalogue=data.items;return {...data,reviews:localReviews()};
+   const data=await response.json();catalogue=data.items.map(item=>({...item,local:!!item.model}));return {...data,items:catalogue,reviews:localReviews()};
   }
   if(path==='/api/reviews/export'){
    const reviews=localReviews();return {version:1,reviews,credits:catalogue.filter(i=>reviews[i.key]).map(({key,name,author,license,collection_name,source_url})=>({key,name,author,license,collection_name,source_url}))};
