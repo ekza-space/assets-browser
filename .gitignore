@@ -1,0 +1,12 @@
+node_modules/
+public/sdk/
+data/*
+!data/.gitkeep
+__pycache__/
+*.pyc
+test-results/
+.DS_Store
+
+.npm-cache/
+
+dist/

@@ -1,0 +1,27 @@
+{
+  "name": "@ekza/assets-browser",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "python3 server.py",
+    "dev": "npm run build && python3 server.py",
+    "test": "python3 -m unittest discover -s tests -v",
+    "test:ui": "node scripts/smoke.mjs",
+    "render": "node scripts/render-thumbnails.mjs",
+    "build:public": "node scripts/build-public.mjs",
+    "test:locales": "node scripts/check-locales.mjs",
+    "publish:ipfs": "node scripts/publish-ipfs.mjs"
+  },
+  "dependencies": {
+    "@ekza/avatar-renderer": "git+https://github.com/ekza-space/ekza-avatar-renderer.git#88432da60940a259a2b3f4163199f983a5584499",
+    "@pixiv/three-vrm": "3.5.5",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "esbuild": "0.25.12",
+    "ipfs-only-hash": "^4.0.0"
+  }
+}

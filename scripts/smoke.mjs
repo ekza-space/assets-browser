@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict';
+import {launchBrowser} from './browser.mjs';
+import {spawn} from 'node:child_process';
+import {mkdir,mkdtemp,cp,rm,readFile} from 'node:fs/promises';
+import {once} from 'node:events';
+await mkdir('test-results',{recursive:true});
+const data=await mkdtemp('test-results/smoke-');
+await cp('data/renders',`${data}/renders`,{recursive:true});
+const server=spawn('python3',['server.py','--data',data,'--port','4179'],{stdio:['ignore','pipe','pipe']});
+const base='http://127.0.0.1:4179';
+let browser;
+try {
+ await Promise.race([once(server.stdout,'data'),once(server,'exit').then(()=>{throw new Error('Test server exited');})]);
+ browser=await launchBrowser();const page=await browser.newPage({viewport:{width:1512,height:1000}});await page.addInitScript(()=>localStorage.setItem('ekza-assets-language','ru'));const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(base);await page.locator('.asset-card').first().waitFor();
+ await page.waitForFunction(()=>document.getElementById('viewer-status').hidden,{timeout:60000});
+ assert.equal(await page.locator('.asset-card').count(),60);
+ assert.match(await page.locator('#result-count').innerText(),/459/);
+ assert.match(await page.locator('#animation-credit').innerText(),/Quaternius/);
+ assert.equal(await page.locator('#animation option').count(),6);
+ const before=await page.locator('#canvas-mount').screenshot();await page.waitForTimeout(650);const after=await page.locator('#canvas-mount').screenshot();assert(!before.equals(after),'Animation changes the rendered pose');
+ await page.locator('#details [data-rating="4"]').click();await page.waitForFunction(()=>document.querySelector('.rating-label').textContent==='4 / 5');
+ await page.locator('#details [data-like]').click();await page.waitForFunction(()=>document.querySelector('#details [data-like]').getAttribute('aria-pressed')==='true');
+ await page.reload();await page.waitForFunction(()=>document.querySelector('.rating-label')?.textContent==='4 / 5');assert.equal(await page.locator('#details [data-like]').getAttribute('aria-pressed'),'true');
+ await page.locator('[data-view="liked"]').click();assert.equal(await page.locator('.asset-card').count(),1);
+ await page.locator('[data-view="all"]').click();
+ await page.locator('#search').fill('Rabbit');assert.equal(await page.locator('.asset-card').count(),1);await page.locator('.card-preview').click();await page.waitForFunction(()=>document.getElementById('viewer-status').hidden&&document.querySelector('.asset-title h2').textContent==='Rabbit');
+ await page.locator('#search').fill('');await page.locator('#search').blur();
+ await page.keyboard.press('5');await page.waitForFunction(()=>document.querySelector('.rating-label').textContent==='5 / 5');
+ await page.locator('#animation').selectOption({label:'walk'});await page.locator('#play').click();await page.locator('#timeline').fill('0.5');
+ await page.locator('#wire').click();assert.equal(await page.locator('#wire').getAttribute('aria-pressed'),'true');await page.locator('#wire').click();
+ await page.locator('#skeleton').click();await page.locator('#skeleton').click();await page.locator('#play').click();
+ await page.locator('#focus-mode').click();assert(await page.locator('body').evaluate(e=>e.classList.contains('focus')));await page.locator('#grid-mode').click();
+ await page.locator('#local-filter').click();assert.match(await page.locator('#result-count').innerText(),/459/);
+ await page.locator('#search').fill('NOT_A_REAL_ASSET_XYZ');assert(await page.locator('#empty').isVisible());await page.locator('#reset-filters').click();
+ await page.locator('.card-preview').nth(1).click();await page.waitForFunction(()=>document.getElementById('viewer-status').hidden);
+ const download=page.waitForEvent('download');await page.locator('#export').click();const downloaded=await download;const exported=JSON.parse(await readFile(await downloaded.path(),'utf8'));assert(Object.values(exported.reviews).some(r=>r.rating===5));assert(exported.credits.every(c=>c.author&&c.license));
+ // Rapid selection must keep the final asset and viewer in sync.
+ const expectedLast=await page.locator('.card-name').nth(7).innerText();
+ for(let i=2;i<8;i++)await page.locator('.card-preview').nth(i).click();
+ await page.waitForFunction(()=>document.getElementById('viewer-status').hidden);assert.equal(await page.locator('.asset-title h2').innerText(),expectedLast);
+ await page.locator('.card-preview').nth(1).click();await page.waitForFunction(()=>document.getElementById('viewer-status').hidden);
+ await page.screenshot({path:'test-results/desktop.png'});
+ await page.setViewportSize({width:390,height:844});await page.locator('#focus-mode').click();await page.screenshot({path:'test-results/mobile.png'});
+ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No mobile horizontal overflow');
+ assert.deepEqual(errors,[]);console.log('UI PASS: 3D, moving animation, clip selection, timeline, wireframe, skeleton, grid/focus, ratings and likes after reload, keyboard, search, local/remote filters, export, rapid navigation, mobile.');
+}finally{if(browser)await browser.close();server.kill('SIGTERM');await once(server,'exit');await rm(data,{recursive:true,force:true});}

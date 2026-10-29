@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Ekza thumbnail renderer</title><script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/":"/vendor/three/","@pixiv/three-vrm":"/vendor/@pixiv/three-vrm/lib/three-vrm.module.min.js","@ekza/avatar-renderer/runtime":"/sdk/runtime.js"}}</script></head><body style="margin:0"><div id="mount" style="width:384px;height:460px"></div><script type="module">
+import {AssetViewer} from './viewer.js';
+const viewer=new AssetViewer(document.getElementById('mount'),{interactive:false});
+viewer.renderer.setPixelRatio(1);viewer.playing=false;
+window.renderAsset=async(item)=>{
+ const info=await viewer.load(item.model);
+ viewer.seek(.2);viewer.vrm?.update(0);viewer.fit();
+ const blob=await viewer.snapshot();
+ const result=await fetch(`/api/renders/${item.token}`,{method:'POST',headers:{'Content-Type':'image/png'},body:blob});
+ if(!result.ok)throw new Error('Save failed: '+result.status);
+ viewer.clear();return {name:item.name,...info};
+};
+</script></body></html>

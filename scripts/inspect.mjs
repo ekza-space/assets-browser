@@ -1,0 +1,13 @@
+import { launchBrowser } from './browser.mjs';
+import { mkdir } from 'node:fs/promises';
+await mkdir('test-results',{recursive:true});
+const browser=await launchBrowser();
+const page=await browser.newPage({viewport:{width:1512,height:1100}});
+page.on('pageerror',e=>console.log('PAGE ERROR',e.message));
+page.on('console',m=>{if(m.type()==='error')console.log('CONSOLE',m.text());});
+await page.goto('http://127.0.0.1:4178');
+await page.locator('.asset-card').first().waitFor();
+await page.waitForFunction(()=>document.getElementById('viewer-status').hidden,{timeout:60000});
+await page.screenshot({path:'test-results/desktop.png',fullPage:false});
+console.log(await page.locator('#details').innerText());
+await browser.close();
