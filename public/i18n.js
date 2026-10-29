@@ -77,6 +77,8 @@ const strings={
 'Позиция анимации':['Animation position','动画进度'],
 'Выберите локальную модель для просмотра.':['Select an available model to preview.','选择可用模型以预览。'],
 '↗ Сохранить PNG-превью':['↗ Save PNG preview','↗ 保存 PNG 预览'],
+'Открыть в Studio →':['Open in Studio →','在 Studio 中打开 →'],
+'Открыть {name} в Studio':['Open {name} in Studio','在 Studio 中打开 {name}'],
 'Ошибка сервера':['Server error','服务器错误'],
 'Открыть {name}':['Open {name}','打开 {name}'],
 'Лайк {name}':['Like {name}','收藏 {name}'],

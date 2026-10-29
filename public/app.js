@@ -1,5 +1,6 @@
 import { t, locale, number, localizeShell } from './i18n.js';
 import { isPublic, request as api, downloadBlob } from './storage.js';
+import { libraryStudioUrl } from './studio-bridge.js';
 if(isPublic){document.querySelector('.local-badge').innerHTML='<i></i> IPFS LIBRARY';document.querySelector('.sidebar-bottom p').innerHTML='Авторы и лицензии сохранены.<br>Оценки хранятся в этом браузере.';document.getElementById('local-filter').hidden=true;}
 localizeShell();
 const $ = id => document.getElementById(id);
@@ -28,6 +29,8 @@ function details(item,info=state.info) {
  const r=review(item); const source=safeLink(item.source_url)||'https://www.opensourceavatars.com/en/gallery';
  $('details').innerHTML=`<div class="detail-eyebrow"><span>${t('Без классификации')}</span><span class="license">${escape(item.license)}</span></div><div class="asset-title"><h2>${escape(item.name)}</h2><button class="detail-like ${r.liked?'active':''}" data-like="${escape(item.key)}" aria-label="${t('Лайк {name}',{name:escape(item.name)})}" aria-pressed="${r.liked}">${r.liked?'♥':'♡'}</button></div><div class="author-line">${t('Автор')} &nbsp;<strong>${escape(item.author)}</strong></div><div class="rating-row">${stars(item,true)}<span class="rating-label">${r.rating?`${r.rating} / 5`:t('Без оценки')}</span></div><div class="meta-grid"><div><small>${t('ФОРМАТ')}</small><span>${info?.kind==='vrm0'?'VRM 0.x':info?.kind==='vrm1'?'VRM 1.0':escape(item.format)}</span></div><div><small>${t('РАЗМЕР')}</small><span>${item.local?(item.bytes/1024/1024).toFixed(1)+' MB':t('Нет на диске')}</span></div><div><small>${t('ТРЕУГОЛЬНИКИ')}</small><span>${info?info.triangles.toLocaleString(locale):'—'}</span></div><div><small>${t('КОСТИ / МЕШИ')}</small><span>${info?`${info.bones} / ${info.meshes}`:'—'}</span></div></div><p class="credit">${escape(item.collection_name)} ${t('by')} ${escape(item.author)} · ${escape(item.license)}.<br><a href="${source}" target="_blank" rel="noreferrer">${t('Источник и атрибуция ↗')}</a></p>`;
  $('download').href=item.model||'#';$('download').hidden=!item.local;$('download').download=`${item.name}.vrm`;
+ $('open-studio').href=libraryStudioUrl(item.key,location.href);$('open-studio').hidden=!item.local;
+ $('open-studio').setAttribute('aria-label',t('Открыть {name} в Studio',{name:item.name}));
 }
 async function getViewer() {
  if(!viewerPromise)viewerPromise=import('./viewer.js').then(({AssetViewer}) => viewer=new AssetViewer($('canvas-mount'),{onProgress:p=>{if(document.activeElement!==$('timeline'))$('timeline').value=p;}})).catch(error=>{viewerPromise=null;throw error;});

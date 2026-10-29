@@ -119,3 +119,15 @@ Creators include Polygonal-Mind, toxsam, NeonGlitch86 and vipe. Licenses belong 
 individual records; the full upstream manifest includes CC-BY models and must not
 be described as entirely CC0. Preview renders retain their model's license.
 SDK test motions: [Universal Animation Library — Quaternius](https://quaternius.com/packs/universalanimationlibrary.html), CC0.
+
+## Animate a library model
+
+The inspector's **Open in Studio** action passes the selected catalogue key to Hub's `/studio-edit` route.
+The paired Hub/Studio integration imports the verified IPFS model, lets the creator save an editable
+`.ekzanim` project and export a VRM, then returns that export to Hub with the original author and licence.
+Account upload, publication review and OMOBA submission are separate explicit steps. OMOBA currently uses
+its own motions; authored clips remain in the project and original VRM.
+
+For the local gallery on port 4178, the action expects Hub on port 7103 and Studio on port 3100. When served
+inside Hub at `/library/`, it uses that Hub origin. Deploy the Studio receiver and Hub route together before
+publishing the action. The manual download/upload path still works independently.
