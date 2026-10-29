@@ -75,6 +75,8 @@ npm run build:public               # produces dist/ for static hosting
 
 `CHROMIUM_PATH` selects an existing browser; the scripts reuse the owner's
 installed Chromium on this Mac. `ASSET_BROWSER_URL` overrides the render server.
+`BROWSER_PROXY` optionally sets an HTTP proxy for browser checks of public IPFS
+content (loopback servers bypass it).
 Restart the local server after downloading new assets.
 
 The uploader computes UnixFS CIDs and SHA-256 before uploading, snapshots existing
@@ -97,6 +99,7 @@ npm run build                  # shared SDK bundle, rejects React in runtime gra
 npm run test:ui                # isolated test SQLite on port 4179
 npm run test:locales           # all languages, no missing-model placeholders
 node scripts/check-public-mode.mjs # visitor-local ratings, no mutation API
+node scripts/check-hosted.mjs   # real IPFS images and 3D; GALLERY_URL overrides URL
 node scripts/check-hub.mjs     # local Hub running on port 7103
 ```
 

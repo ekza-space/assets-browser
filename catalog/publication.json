@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "date": "2026-10-29T17:40:21.782Z",
+  "catalogCid": "QmYyU32LJcf19n6RsfaTQUmkKMTocfD24VEN88BsnwLwE1",
+  "catalogUri": "ipfs://QmYyU32LJcf19n6RsfaTQUmkKMTocfD24VEN88BsnwLwE1",
+  "gatewayUrl": "https://ekza.mypinata.cloud/ipfs/QmYyU32LJcf19n6RsfaTQUmkKMTocfD24VEN88BsnwLwE1",
+  "sha256": "ff5025f507208c49b4e300f73f5273081a46b3c1ae0282d401bb052af2f8f07a",
+  "models": 459,
+  "previews": 459,
+  "usdz": 431,
+  "sourceRevision": "bcb2a0476e5d8cfc0aa891ddaf056271a58ea488",
+  "sdkRevision": "88432da60940a259a2b3f4163199f983a5584499",
+  "languages": [
+    "en",
+    "zh",
+    "ru"
+  ],
+  "classification": "unclassified"
+}
